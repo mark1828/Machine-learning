@@ -1,0 +1,24 @@
+Een complex getal is een getal in de vorm a+bi, waarbij a en b reële getallen zijn en i de imaginaire eenheid is (de wortel van -1). 
+In Python (en dus in PyTorch) worden complexe getallen ondersteund en hebben ze hun eigen dtype, 
+meestal aangeduid als complex64 of complex128. Hierin staat 64 of 128 voor het aantal bits dat wordt gebruikt om het getal op te slaan.
+
+Stel je voor dat je getallen hebt die een "extra stukje" hebben naast het normale getal. Dit extra stukje is een soort "fantasiegetal" dat we de letter i geven.
+I is speciaal omdat het wordt gedefinieerd als de wortel van -1, iets wat normaal niet kan in de reguliere wiskunde.
+
+Dus, een complex getal is eigenlijk een mix van een normaal getal en een stukje dat dit fantasiegetal i bevat. We schrijven dit als a+bi.
+Dus a is het normale getal (ook wel het "reële deel" genoemd) en b is het getal dat bij i hoort (ook wel het "imaginaire deel").
+
+Bijvoorbeeld, 3+4i is een complex getal waarbij 3 het reële deel is en 4 het imaginaire deel.
+
+De "i" in een complex getal geeft ons een manier om met de "vierkantswortel van -1" te werken, iets wat niet bestaat in het domein van de reële getallen. 
+Dit is nuttig in bepaalde soorten wiskunde en natuurkunde, zoals bij elektrotechniek en kwantummechanica.
+
+In het geval van het complexe getal 3+4i, je kunt het niet verder vereenvoudigen zoals je zou doen met een reëel getal. Het is gewoon 3+4i, en dat is het. 
+Je kunt er echter wel wiskundige operaties mee uitvoeren, zoals optellen, aftrekken, vermenigvuldigen, enz., zolang je de speciale regels voor het omgaan met i volgt.
+
+Voorbeeld:
+Laten we het complexe getal 3+4i optellen bij een ander complex getal, bijvoorbeeld 1+2i:
+
+(3+4i) + (1+2i) = (3+1) + (4+2)i = 4+6i
+
+Zoals je ziet, tel je de reële delen bij elkaar op en de imaginaire delen bij elkaar op. Het resultaat is een nieuw complex getal.
