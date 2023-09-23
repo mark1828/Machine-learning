@@ -13,7 +13,7 @@ import torchinfo, torchmetrics
 # Scalars worden bijvoorbeeld gebruikt om vectoren en matrices te schalen of om een grootte (magnitude) weer te geven.
 
 scalar = torch.tensor(1)
-scalar.item()
+scalar.item() # Dit is corresponderend aan print(scalar)
 
 # Vector
 # Een vector vaak weergegeven als een eendimensionale array
@@ -127,7 +127,7 @@ arangeTensor.max()
 # Vind de mean. Standaard is de datatype int64, die niet wordt toegelaten door de mean functie, dus moet je de datatype aanpassen van de tensor.
 # Anders krijg je deze error: RuntimeError: mean(): could not infer output dtype. Input dtype must be either a floating point or complex dtype. Got: Long
 # Hij geeft al aan dat het een floating point of een complex dtype moet zijn.
-arangeTensor.mean(arangeTensor.type(torch.float32))
+arangeTensor.type(torch.float32).mean()
 
 # Vind de sum (Alles bij elkaar opgeteld)
 arangeTensor.sum()
@@ -137,3 +137,83 @@ arangeTensor.argmin()
 
 # Vind de positie in tensor van de maximum value -> returned de index van deze maximum value
 arangeTensor.argmax()
+
+#--------------------------------- Reshaping, stacking, squeezing and unsqueezing tensors ----------------------------------------#
+
+# Reshaping - Verandert de vorm van een invoertensor naar een gedefinieerde vorm
+# View - Geeft een weergave terug van een invoertensor met een bepaalde vorm, maar behoudt hetzelfde geheugen als de originele tensor
+# Stacking - Combineert meerdere tensors bovenop elkaar (vstack) of naast elkaar (hstack)
+# Squeeze - Verwijdert alle `1` dimensies uit een tensor
+# Unsqueeze - Voegt een `1` dimensie toe aan een doeltensor
+# Permute - Geeft een weergave terug van de invoer met dimensies die op een bepaalde manier zijn verwisseld (omgewisseld)
+
+# Create new tensor
+x = torch.arange(1, 10) # dit returned: tensor([1, 2, 3, 4, 5, 6, 7, 8, 9]) torch.Size([9])
+
+# Voeg een extra dimensie toe
+x_reshaped = x.reshape(1, 9) # De reshape moet overheen komen het de size. Dus 1 en 9 kan, omdat 1 maal 9 = 9. Maar 2 en 9 kan niet. Want 2 maal 9 is 18.
+# x.reshape(1, 9) zal de tensor omvormen tot een 2-dimensionale tensor met 1 rij en 9 kolommen, dus als volgt: [[1, 2, 3, 4, 5, 6, 7, 8, 9]].
+# x.reshape(9, 1) zal de tensor omvormen tot een 2-dimensionale tensor met 9 rijen en 1 kolom, dus als volgt:
+# tensor([[1],
+#        [2],
+#        [3],
+#        [4],
+#        [5],
+#        [6],
+#        [7],
+#        [8],
+#        [9]])
+# Beide operaties behouden het aantal elementen (9 in dit geval), maar de dimensies en de vorm van de tensor zijn anders. 
+# Het eerste resultaat is een rijvector, en het tweede resultaat is een kolomvector.
+
+# Verander de view
+z = x.view(1, 9) # Dit returned tensor([[1, 2, 3, 4, 5, 6, 7, 8, 9]]) torch.Size([1, 9])
+# Het veranderen van Z zal ook X veranderen. (Want de view van een tensor deelt dezelfde memory als de orginele memory)
+
+# Stack tensors op elkaar
+x_stacked = torch.stack([x, x, x, x], dim=0) # Dit returned 
+# tensor([[1, 2, 3, 4, 5, 6, 7, 8, 9],
+#        [1, 2, 3, 4, 5, 6, 7, 8, 9],
+#        [1, 2, 3, 4, 5, 6, 7, 8, 9],
+#        [1, 2, 3, 4, 5, 6, 7, 8, 9]])
+
+# Bij `dim=2` krijg je een foutmelding. Dit komt omdat de invoertensors 1-dimensionaal is en er geen 2e dimensie bestaat om langs te stapelen. 
+# De maximale waarde voor dim is gelijk aan het aantal dimensies van de tensor (in dit geval is dat 1).
+# Om stapeling langs de 2e dimensie mogelijk te maken, zou je de invoertensors eerst moeten omvormen tot ten minste 2-dimensionale tensors.
+
+# torch.squeeze() - Verwijderd alle single dimensions van een tensor
+x_squeezed = x_reshaped.squeeze() # Dit maakt van tensor([[1, 2, 3, 4, 5, 6, 7, 8, 9]]) naar tensor([1, 2, 3, 4, 5, 6, 7, 8, 9]). Hij haalt simpel weg gewoon de dimension weg.
+
+# toch.unsqueeze() - Voegt een single dimension toe aan een tensor naar een specifieke dim (dimension)
+x_unsqueezed = x_squeezed.unsqueeze(dim=0) # Dim pakt de index van de size, dus (1, 9) is de 1 een 0 want python begint met tellen vanaf 0's. 
+# Stel ik doe dim=1 dan krijg ik dezelfde shape als `x.reshape(9, 1)` bij regel 157
+# Dus dit maakt de squeezed tensor `tensor([1, 2, 3, 4, 5, 6, 7, 8, 9])` weer een `tensor([[1, 2, 3, 4, 5, 6, 7, 8, 9]])`
+
+x_original = torch.rand(size=(224, 275, 3)) # returned torch.Size([224, 224, 3])
+x_premute = torch.permute(x_original, (2, 0, 1)).size() # 2, 0, 1 zijn de indexes. Dus je ziet 2 = 3, 0 = 224 en 1 = 275. Omdat python bij 0 begint met tellen.
+# x_premute returned torch.Size([3, 224, 275])
+
+# Indexing (Selecteer data van tensors)
+
+# Create new tensor
+m = torch.arange(1, 10).reshape(1, 3, 3) # Reshape moet gelijk zijn aan de size, want 1 ⋅ 3 ⋅ 3 = 9
+# Dit returned: 
+# tensor([[[1, 2, 3],
+#        [4, 5, 6],
+#        [7, 8, 9]]])
+# De `1` staat voor 1 dimension. Dus de [] brackets
+# De eerste `3` staat voor 3 columns ([1, 2, 3] = 1 column)
+# De tweede `3` staat voor 3 per column ([1, 2, 3] heeft 3 values)
+
+m # returned [[[1, 2, 3], [4, 5, 6], [7, 8, 9]]]
+m[0] # returned [[1, 2, 3], [4, 5, 6], [7, 8, 9]]. Hij gaat 1 dimension erin.
+m[0][0] # returned [1, 2, 3]
+m[0][0][0] # returned 1
+m[0][0][2] # returned 3
+m[0, 0, 2] # Kan ook
+
+# Zo ga je steeds dieper de tensor in
+# Je kan ook ":" gebruiken om "alles" te targeten van de dimension
+m[:, 0] # returned [1, 2, 3]. Want de eerste `:` pakt alles, dus dat is simpel weg dimension 1. En 0 is dan [1, 2 ,3]. Dus de eerste index
+m[:, 1, 1] # dit returned `5`. Het is in dit geval het zelfde als [0, 1, 1]
+m[:, :, 1] # returned [2, 5, 8]. Omdat deze alle 1e indexes pakt van de columns. Door die middelste te veranderen naar `:` pak je alle `1` indexes.
